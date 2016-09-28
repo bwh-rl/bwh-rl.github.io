@@ -1,0 +1,33 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../my-app-styles.html">
+
+<dom-module id="special-primary-view">
+	<template>
+		<style include="my-app-styles">
+			:host {
+				display: block;
+				padding: 2rem;
+			}
+		</style>
+
+		<div>
+			<h1>Special</h1>
+			<p>Special routing will link everything in this tree to this page.</p>
+			<p>Modus commodo minimum eum te, vero utinam assueverit per eu.</p>
+			<p>Ea duis bonorum nec, falli paulo aliquid ei eum.Has at minim mucius aliquam, est id tempor laoreet.Pro saepe pertinax ei, ad pri animal labores suscipiantur.</p>
+
+			<p><paper-button><a href="/special/sub1/">Sub page 1</a></paper-button></p>
+			<p><paper-button><a href="/special/sub2/">Sub page 2</a></paper-button></p>
+			<p><paper-button><a href="/special/sub3/">Sub page 3</a></paper-button></p>
+			<p><paper-button><a href="/special/sub4/">Sub page 4</a></paper-button></p>
+			<p><paper-button><a href="/special/sub5/">Sub page 5</a></paper-button></p>
+		</div>
+	</template>
+
+	<script>
+		Polymer({
+			is: 'special-primary-view'
+		});
+	</script>
+</dom-module>

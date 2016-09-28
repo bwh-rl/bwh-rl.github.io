@@ -1,0 +1,27 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../my-app-styles.html">
+
+<dom-module id="loading-view">
+	<template>
+		<style include="my-app-styles">
+			:host {
+				@apply(--layout-fit);
+				@apply(--layout-horizontal);
+				@apply(--layout-center);
+			}
+
+			paper-spinner {
+				margin: auto;
+			}
+		</style>
+
+		<paper-spinner active></paper-spinner>
+	</template>
+
+	<script>
+		Polymer({
+			is: 'loading-view'
+		});
+	</script>
+</dom-module>

@@ -1,0 +1,448 @@
+<!--
+@license
+Copysecondary (c) 2016 The Polymer Project Authors. All secondarys reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP secondarys grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<!-- app-elements -->
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<!-- iron-elements -->
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<!-- paper-elements -->
+<link rel="import" href="../bower_components/paper-drawer-panel/paper-drawer-panel.html">
+<link rel="import" href="../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+<!-- my-app-elements -->
+<link rel="import" href="my-app-page.html">
+<link rel="import" href="my-app-styles.html">
+<!-- Non-lazy views. -->
+<link rel="import" href="page/loading/view.html">
+<link rel="import" href="page/error/view.html">
+
+<dom-module id="my-app">
+  <template>
+    <style include="my-app-styles">
+      :host {
+        --primary-color: var(--paper-pink-400);
+        display: block;
+      }
+
+      iron-pages {
+        @apply(--layout-fit);
+      }
+
+      /* Bypass issue https://github.com/PolymerElements/paper-header-panel/issues/93. */
+      paper-toolbar {
+        transition: var(--paper-toolbar-transition, height 0.18s ease-in);
+      }
+
+      /* Some polymer flex styles override browsers display: none, !important fixes that. */
+      [hidden] {
+        display: none !important;
+      }
+
+      /* Special styling to bypass https://github.com/PolymerElements/paper-toolbar/issues/94. */
+      #primaryToolbarTitle {
+        margin-left: 0;
+      }
+      #primaryToolbarNavigation,
+      #primaryToolbarBack {
+        margin-right: 24px;
+      }
+    </style>
+
+    <app-location route="{{ url }}" on-location-changed="_test"></app-location>
+
+    <!-- Depends on https://github.com/PolymerElements/app-route/issues/144 -->
+    <app-route id="defaultRoute1" route="{{ url }}" pattern="/:url1/" on-app-route-matched="_routeChanged"></app-route>
+    <app-route id="defaultRoute2" route="{{ url }}" pattern="/:url1/:url2/" on-app-route-matched="_routeChanged"></app-route>
+    <app-route id="defaultRoute3" route="{{ url }}" pattern="/:url1/:url2/:url3/" on-app-route-matched="_routeChanged"></app-route>
+    <app-route id="specialRoute" route="{{ url }}" pattern="/special" on-app-route-matched="_routeChanged"></app-route>
+
+    <!-- Page settings -->
+    <my-app-page
+            id="page-login"
+            route="login"
+            public-access
+            primary-toolbar-title="Login"
+            navigation-panel-disabled></my-app-page>
+
+    <my-app-page
+            id="page-home"
+            route="home"
+            primary-toolbar-title="Home"
+            primary-toolbar-navigation></my-app-page>
+
+    <my-app-page
+            id="page-content"
+            route="content"
+            primary-toolbar-title="Content"
+            primary-toolbar-navigation
+            primary-toolbar-secondary
+            secondary-panel-enabled
+            secondary-panel-max-width="256"
+            secondary-toolbar-title="Content"></my-app-page>
+
+    <my-app-page
+            id="page-special"
+            route="special"
+            primary-toolbar-title="Special"
+            primary-toolbar-size="medium-tall"
+            primary-toolbar-navigation></my-app-page>
+
+    <my-app-page
+            id="page-profile"
+            route="profile"
+            primary-toolbar-title="Profile"
+            primary-toolbar-navigation></my-app-page>
+
+    <my-app-page
+            id="page-profile_image"
+            route="profile_image"
+            primary-toolbar-title="Profile image"
+            primary-toolbar-size="medium-tall"
+            primary-toolbar-back
+            primary-toolbar-back-href="/profile/"
+            primary-toolbar-secondary
+            primary-toolbar-secondary-icon="image:collections"
+            secondary-panel-enabled
+            secondary-panel-hidden
+            secondary-toolbar-title="Image list"
+            secondary-toolbar-size="medium-tall"></my-app-page>
+
+    <my-app-page
+            id="page-error404"
+            route="error404"
+            primary-toolbar-title="Error 404"
+            primary-toolbar-navigation></my-app-page>
+    <!-- Page settings -->
+
+    <paper-drawer-panel
+            id="navigationDrawerPanel"
+            responsive-width="1280px"
+            drawer-width="[[ navigationDrawerWidth ]]px"
+            narrow="{{ navigationDrawerNarrow }}"
+            disable-swipe="[[ navigationPanelDisabled ]]"
+            force-narrow="[[ navigationPanelDisabled ]]">
+
+      <!-- Navigation panel -->
+      <paper-header-panel id="navigationHeaderPanel" drawer>
+        <paper-toolbar id="navigationToolbar">
+          <div class="title">Navigation</div>
+        </paper-toolbar>
+        <paper-menu selected="[[ route ]]" attr-for-selected="name" class="drawer-list" role="navigation">
+          <a href="/home/" name="home"><paper-item>Home</paper-item></a>
+          <a href="/content/" name="content"><paper-item>Content</paper-item></a>
+          <a href="/special/" name="special"><paper-item>Special</paper-item></a>
+          <a href="/profile/" name="profile"><paper-item>Profile</paper-item></a>
+        </paper-menu>
+      </paper-header-panel>
+      <!-- Navigation panel -->
+
+      <!-- The paper-drawer-panel can only tell you if the the panel is narrow or not,
+           if it is forced narrow, you cannot tell if the responsive with is active or not.
+           TODO: Create an issue. -->
+      <iron-media-query
+              query="(min-width: 900px)"
+              query-matches="{{ secondaryDrawerResponsive }}"></iron-media-query>
+
+      <paper-drawer-panel
+              id="secondaryDrawerPanel"
+              responsive-width="900px"
+              drawer-width="[[ secondaryDrawerWidth ]]px"
+              narrow="{{ secondaryDrawerNarrow }}"
+              disable-swipe="[[ secondaryDrawerDisableSwipe ]]"
+              force-narrow="[[ secondaryDrawerForceNarrow ]]"
+              selected="{{ secondaryDrawerSelected }}"
+              right-drawer
+              main>
+
+        <!-- Primary panel -->
+        <paper-header-panel id="primaryHeaderPanel" main>
+          <paper-toolbar id="primaryToolbar" class$="[[ primaryToolbarSize ]]">
+            <paper-icon-button
+                    id="primaryToolbarNavigation"
+                    icon="[[ primaryToolbarNavigationIcon ]]"
+                    on-tap="navigationDrawerPanelToggle"
+                    hidden="[[ primaryToolbarNavigationHidden ]]"></paper-icon-button>
+            <a id="primaryToolbarBack" href$="[[ primaryToolbarBackHref ]]" hidden$="[[ !primaryToolbarBack ]]">
+              <paper-icon-button icon="[[ primaryToolbarBackIcon ]]"></paper-icon-button>
+            </a>
+            <div id="primaryToolbarTitle" class="title">[[ primaryToolbarTitle ]]</div>
+            <paper-icon-button
+                    id="primaryToolbarSecondary"
+                    icon="[[ primaryToolbarSecondaryIcon ]]"
+                    on-tap="secondaryDrawerPanelToggle"
+                    hidden="[[ primaryToolbarSecondaryHidden ]]"></paper-icon-button>
+          </paper-toolbar>
+
+          <iron-pages id="primaryViewPages" selected="[[ primaryView ]]" attr-for-selected="route" role="primary">
+            <loading-view route="loading"></loading-view>
+            <error-view route="error"></error-view>
+
+            <login-primary-view route="login"></login-primary-view>
+
+            <home-primary-view route="home"></home-primary-view>
+            <content-primary-view route="content"></content-primary-view>
+            <special-primary-view route="special"></special-primary-view>
+            <profile-primary-view route="profile"></profile-primary-view>
+            <profile_image-primary-view route="profile_image"></profile_image-primary-view>
+            <error404-primary-view route="error404"></error404-primary-view>
+          </iron-pages>
+        </paper-header-panel>
+        <!-- Primary panel -->
+
+        <!-- Secondary panel -->
+        <paper-header-panel id="secondaryHeaderPanel" drawer>
+          <paper-toolbar id="secondaryToolbar" class$="[[ secondaryToolbarSize ]]">
+            <div id="secondaryToolbarTitle" class="title">[[ secondaryToolbarTitle ]]</div>
+          </paper-toolbar>
+
+          <iron-pages id="secondaryViewPages" selected="[[ secondaryView ]]" attr-for-selected="route">
+            <loading-view route="loading"></loading-view>
+            <error-view route="error"></error-view>
+
+            <content-secondary-view route="content"></content-secondary-view>
+            <profile_image-secondary-view route="profile_image"></profile_image-secondary-view>
+          </iron-pages>
+        </paper-header-panel>
+        <!-- Secondary panel -->
+
+      </paper-drawer-panel>
+    </paper-drawer-panel>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'my-app',
+      behaviors: [Polymer.IronResizableBehavior],
+
+      properties: {
+        route: {
+          type: String,
+          reflectToAttribute: true
+        }
+      },
+
+      observers: [
+        '_primaryToolbarNavigationHidden( primaryToolbarNavigation, navigationDrawerNarrow )',
+        '_primaryToolbarSecondaryHidden( primaryToolbarSecondary, secondaryDrawerNarrow, secondaryPanelHidden )',
+        '_secondaryDrawerDisableSwipe( secondaryPanelEnabled, secondaryDrawerResponsive )',
+        '_secondaryDrawerForceNarrow( secondaryPanelEnabled, secondaryPanelHidden, secondaryDrawerResponsive, secondaryDrawerSelected )',
+        '_navigationDrawerWidth( navigationPanelMaxWidth )',
+        '_secondaryDrawerWidth( secondaryPanelMaxWidth )'
+      ],
+
+      listeners: {
+        'iron-resize': '_resizeHandler'
+      },
+
+      ready: function() {
+        this.appReady = true;
+
+        this._routeChanged();
+        this._primaryToolbarNavigationHidden();
+        this._primaryToolbarSecondaryHidden();
+        this._secondaryDrawerDisableSwipe();
+        this._secondaryDrawerForceNarrow();
+      },
+
+      // Routing.
+      // TODO: Split into e.g. "select page" and "set page settings" functions.
+      _routeChanged: function() {
+        // The new active page to be shown.
+        this.route = undefined;
+
+        // Check for valid default route.
+        if( !this.route && ( this.$.defaultRoute1.active || this.$.defaultRoute2.active || this.$.defaultRoute3.active )) {
+          var route;
+
+          // Build the view id from the active route data.
+          if( this.$.defaultRoute1.active ) {
+            route = this.$.defaultRoute1.data.url1;
+          } else if( this.$.defaultRoute2.active ) {
+            route = this.$.defaultRoute2.data.url1 + '_' + this.$.defaultRoute2.data.url2;
+          } else if( this.$.defaultRoute3.active ) {
+            route = this.$.defaultRoute3.data.url1 + '_' + this.$.defaultRoute3.data.url2 + '_' + this.$.defaultRoute3.data.url3;
+          }
+
+          // If the page exists, set it as page.
+          if( this.$[ 'page-' + route ]) {
+            this.route = route;
+          }
+        }
+
+        // Check for valid special route.
+        if( !this.route && this.$.specialRoute.active ) {
+          this.route = 'special';
+        }
+
+        // If no page is found, show 404 page.
+        if( !this.route ) {
+          this.route = 'error404';
+        }
+
+        // Set the page.
+        this.page = this.$[ 'page-' + this.route ];
+
+        // TODO: Check for access rights.
+
+        // Navigation drawer.
+        this.navigationPanelDisabled = this.page.navigationPanelDisabled;
+        this.navigationPanelMaxWidth = this.page.navigationPanelMaxWidth;
+
+        // Primary Panel - Page settings.
+        this.primaryPanelMinWidth = this.page.primaryPanelMinWidth;
+
+        // Primary toolbar.
+        this.primaryToolbarTitle = this.page.primaryToolbarTitle;
+        this.primaryToolbarSize = this.page.primaryToolbarSize;
+        this.primaryToolbarNavigation = this.page.primaryToolbarNavigation;
+        this.primaryToolbarNavigationIcon = this.page.primaryToolbarNavigationIcon;
+        this.primaryToolbarBack = this.page.primaryToolbarBack;
+        // TODO: If no href is set, route 1 level down by default.
+        this.primaryToolbarBackHref = this.page.primaryToolbarBackHref;
+        this.primaryToolbarBackIcon = this.page.primaryToolbarBackIcon;
+        this.primaryToolbarSecondary = this.page.primaryToolbarSecondary;
+        this.primaryToolbarSecondaryIcon = this.page.primaryToolbarSecondaryIcon;
+
+        // Set primary view to loading and start loading.
+        this.primaryView = 'loading';
+        // TODO: is it possible to check if this view already is loaded before laoading again?
+        var resolvedMainViewUrl = this.resolveUrl( 'page/' + this.route + '/primary-view.html' );
+        this.importHref( resolvedMainViewUrl, this._primaryViewLoaded, this._primaryViewError, true );
+
+        // Secondary drawer.
+        this.secondaryPanelEnabled = this.page.secondaryPanelEnabled;
+        this.secondaryPanelHidden = this.page.secondaryPanelHidden;
+        this.secondaryPanelMaxWidth = this.page.secondaryPanelMaxWidth;
+        // Manually set the drawer panel to main.
+        this.secondaryDrawerSelected = 'main';
+
+        // Secondary toolbar.
+        this.secondaryToolbarTitle = this.page.secondaryToolbarTitle;
+        this.secondaryToolbarSize = this.page.secondaryToolbarSize;
+
+        if( this.secondaryPanelEnabled ) {
+          // Set secondary view to loading and start loading.
+          this.secondaryView = 'loading';
+          // TODO: is it possible to check if this view already is loaded before laoading again?
+          var resolvedSecondaryViewUrl = this.resolveUrl( 'page/' + this.route + '/secondary-view.html' );
+          this.importHref( resolvedSecondaryViewUrl, this._secondaryViewLoaded, this._secondaryViewError, true );
+        }
+
+        this._resizeHandler();
+      },
+
+      /* importHref functions */
+      _primaryViewLoaded: function() {
+        this.primaryView = this.route;
+      },
+
+      _primaryViewError: function() {
+        this.primaryView = 'error';
+      },
+
+      _secondaryViewLoaded: function() {
+        this.secondaryView = this.route;
+      },
+
+      _secondaryViewError: function() {
+        this.primaryView = 'error';
+      },
+
+      /* Observers */
+      _primaryToolbarNavigationHidden: function( primaryToolbarNavigation, navigationDrawerNarrow ) {
+        if( this.appReady ) {
+          this.primaryToolbarNavigationHidden = !this.primaryToolbarNavigation || !this.navigationDrawerNarrow;
+        }
+      },
+
+      _primaryToolbarSecondaryHidden: function( primaryToolbarSecondary, secondaryDrawerNarrow, secondaryPanelHidden ) {
+        if( this.appReady ) {
+          this.primaryToolbarSecondaryHidden = !this.primaryToolbarSecondary || ( !this.secondaryDrawerNarrow && !this.secondaryPanelHidden );
+        }
+      },
+
+      _secondaryDrawerDisableSwipe: function( secondaryPanelEnabled, secondaryDrawerResponsive ) {
+        if( this.appReady ) {
+          this.secondaryDrawerDisableSwipe = !this.secondaryPanelEnabled || this.secondaryDrawerResponsive;
+        }
+      },
+
+      _secondaryDrawerForceNarrow: function( secondaryPanelEnabled, secondaryPanelHidden, secondaryDrawerResponsive, secondaryDrawerSelected ) {
+        if( this.appReady ) {
+          this.secondaryDrawerForceNarrow = !this.secondaryPanelEnabled || !this.secondaryDrawerResponsive || ( this.secondaryPanelHidden && ( this.secondaryDrawerSelected == 'main' ));
+        }
+      },
+
+      _navigationDrawerWidth: function( secondaryMaxWidth ) {
+        if( this.appReady ) {
+          var materialDrawerMargin = 56;
+
+          if (this.offsetWidth < this.navigationPanelMaxWidth + materialDrawerMargin) {
+            this.navigationDrawerWidth = this.offsetWidth - materialDrawerMargin;
+          } else {
+            this.navigationDrawerWidth = this.navigationPanelMaxWidth;
+          }
+        }
+      },
+
+      _secondaryDrawerWidth: function( secondaryMaxWidth ) {
+        if( this.appReady ) {
+          var materialDrawerMargin = 56;
+
+          // TODO: i guess this is possible in a more elegant way.
+          if (this.offsetWidth <= this.secondaryPanelMaxWidth + materialDrawerMargin) {
+            // Screen is smaller then max width + margin.
+            this.secondaryDrawerWidth = this.offsetWidth - materialDrawerMargin;
+          } else if (this.offsetWidth <= parseInt(this.$.secondaryDrawerPanel.responsiveWidth)) {
+            // Screen is bigger than max width, but still in narrow layout.
+            this.secondaryDrawerWidth = this.secondaryPanelMaxWidth;
+          } else if (this.offsetWidth <= this.secondaryPanelMaxWidth + this.primaryPanelMinWidth) {
+            // Left narrow layout, screen to small to display drawer max next to content.
+            this.secondaryDrawerWidth = this.offsetWidth - this.primaryPanelMinWidth;
+          } else if (this.offsetWidth <= parseInt(this.$.navigationDrawerPanel.responsiveWidth)) {
+            // Max drawer fits next to content, no app drawer present.
+            this.secondaryDrawerWidth = this.secondaryPanelMaxWidth;
+          } else if (this.offsetWidth <= this.secondaryPanelMaxWidth + this.primaryPanelMinWidth + this.navigationDrawerWidth) {
+            // App drawer present, screen to small to display drawer max next to content and app-drawer.
+            this.secondaryDrawerWidth = this.offsetWidth - this.primaryPanelMinWidth - this.navigationDrawerWidth;
+          } else {
+            // Screen big enough to display drawer max next to content and app-drawer.
+            this.secondaryDrawerWidth = this.secondaryPanelMaxWidth;
+          }
+        }
+      },
+
+      _resizeHandler: function() {
+        this._navigationDrawerWidth();
+        this._secondaryDrawerWidth();
+      },
+
+      // Tap events.
+      navigationDrawerPanelToggle: function() {
+        this.$.navigationDrawerPanel.togglePanel();
+      },
+
+      secondaryDrawerPanelToggle: function() {
+        this.$.secondaryDrawerPanel.togglePanel();
+      }
+    });
+  </script>
+</dom-module>

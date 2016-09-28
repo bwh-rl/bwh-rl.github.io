@@ -1,0 +1,148 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<script>
+	Polymer({
+		is: 'my-app-page',
+
+		properties: {
+			/**
+			 * The route to be matched to a url, e.g
+			 * url: /data/profile/image/ -> data_profile_image
+			 */
+			route: {
+				type: String
+			},
+			/**
+			 * If true, no login is required to view this page.
+			 */
+			publicAccess: {
+				type: Boolean,
+				value: false
+			},
+			/**
+			 * If true, the navigation drawer is neither visible nor swipeable.
+			 */
+			navigationPanelDisabled: {
+				type: Boolean,
+				value: false
+			},
+			/**
+			 * The maximum width of the navigation drawer,
+			 * it may be smaller due small screen.
+			 */
+			navigationPanelMaxWidth: {
+				type: Number,
+				value: 300
+			},
+			/**
+			 * The minimum width of the primary content container,
+			 * it may be larger due large screen.
+			 */
+			primaryPanelMinWidth: {
+				type: Number,
+				value: 600
+			},
+			/**
+			 * The main title of the primary toolbar.
+			 */
+			primaryToolbarTitle: {
+				type: String
+			},
+			/**
+			 * The size of the primary toolbar.
+			 * Not set -> Default small one-row size.
+			 * 'medium-tall' -> Medium two-row size.
+			 * 'tall' -> Tall three-row size.
+			 */
+			primaryToolbarSize: {
+				type: String
+			},
+			/**
+			 * If true, a paper-icon-button is shown that toggles the navigation drawer.
+			 */
+			primaryToolbarNavigation: {
+				type: Boolean,
+				value: false
+			},
+			/**
+			 * The icon of the navigation button.
+			 */
+			primaryToolbarNavigationIcon: {
+				type: String,
+				value: 'menu'
+			},
+			/**
+			 * If true, a paper-icon-button is shown that links back.
+			 */
+			primaryToolbarBack: {
+				type: Boolean,
+				value: false
+			},
+			/**
+			 * The href of the back button.
+			 */
+			primaryToolbarBackHref: {
+				type: String
+			},
+			/**
+			 * The icon of the back button.
+			 */
+			primaryToolbarBackIcon: {
+				type: String,
+				value: 'chevron-left'
+			},
+			/**
+			 * If true, a paper-icon-button is shown that toggles the secondary drawer.
+			 */
+			primaryToolbarSecondary: {
+				type: Boolean,
+				value: false
+			},
+			/**
+			 * The icon of the secondary button.
+			 */
+			primaryToolbarSecondaryIcon: {
+				type: String,
+				value: 'more-vert'
+			},
+			/**
+			 * If true, the secondary drawer is enabled, with secondary toolbar and view.
+			 */
+			secondaryPanelEnabled: {
+				type: Boolean,
+				value: false
+			},
+			/**
+			 * If true, the secondary drawer is also narrow in responsive mode,
+			 * and changes to wide layout when opened.
+			 */
+			secondaryPanelHidden: {
+				type: Boolean,
+				value: false
+			},
+			/**
+			 * The maximum width of the secondary drawer,
+			 * it may be smaller due small screen.
+			 */
+			secondaryPanelMaxWidth: {
+				type: Number,
+				value: 500
+			},
+			/**
+			 * The main title of the secondary toolbar.
+			 */
+			secondaryToolbarTitle: {
+				type: String
+			},
+			/**
+			 * The size of the secondary toolbar.
+			 * Not set -> Default small one-row size.
+			 * 'medium-tall' -> Medium two-row size.
+			 * 'tall' -> Tall three-row size.
+			 */
+			secondaryToolbarSize: {
+				type: String
+			}
+		}
+	});
+</script>
