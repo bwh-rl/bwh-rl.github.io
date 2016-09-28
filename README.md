@@ -1,2 +1,2 @@
 # bwh-rl.github.io
-Polymer starter kit fir big apps.
+Polymer starter kit for big apps.
