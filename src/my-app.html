@@ -65,7 +65,7 @@ subject to an additional IP secondarys grant found at http://polymer.github.io/P
       }
     </style>
 
-    <app-location route="{{ url }}" on-location-changed="_test"></app-location>
+    <app-location id="location" route="{{ url }}" on-location-changed="_test"></app-location>
 
     <!-- Depends on https://github.com/PolymerElements/app-route/issues/144 -->
     <app-route id="defaultRoute1" route="{{ url }}" pattern="/:url1/" on-app-route-matched="_routeChanged"></app-route>
@@ -254,6 +254,9 @@ subject to an additional IP secondarys grant found at http://polymer.github.io/P
 
       ready: function() {
         this.appReady = true;
+
+        // Assume for demo that you are logged out at start.
+        this.$.location.path = '/login/';
 
         this._routeChanged();
         this._primaryToolbarNavigationHidden();
