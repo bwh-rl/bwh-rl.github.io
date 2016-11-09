@@ -32,7 +32,9 @@ subject to an additional IP secondarys grant found at http://polymer.github.io/P
 <!-- Non-lazy views. -->
 <!-- TODO: Move this outside of page directory, rename e.g. my-app-loading-view, my-app-error-view. -->
 <link rel="import" href="page/loading/view.html">
-<link rel="import" href="page/error/view.html">
+<link rel="import" href="my-app-error-view.html">
+
+<link rel="import" href="my-app-routing-behavior.html">
 
 <dom-module id="my-app">
   <template>
@@ -69,10 +71,10 @@ subject to an additional IP secondarys grant found at http://polymer.github.io/P
     <app-location id="location" route="{{ url }}" on-location-changed="_test"></app-location>
 
     <!-- Depends on https://github.com/PolymerElements/app-route/issues/144 -->
-    <app-route id="defaultRoute1" route="{{ url }}" pattern="/:url1/" on-app-route-matched="_routeChanged"></app-route>
-    <app-route id="defaultRoute2" route="{{ url }}" pattern="/:url1/:url2/" on-app-route-matched="_routeChanged"></app-route>
-    <app-route id="defaultRoute3" route="{{ url }}" pattern="/:url1/:url2/:url3/" on-app-route-matched="_routeChanged"></app-route>
-    <app-route id="specialRoute" route="{{ url }}" pattern="/special" on-app-route-matched="_routeChanged"></app-route>
+    <app-route id="defaultRoute1" route="{{ url }}" pattern="/:url1/"></app-route>
+    <app-route id="defaultRoute2" route="{{ url }}" pattern="/:url1/:url2/"></app-route>
+    <app-route id="defaultRoute3" route="{{ url }}" pattern="/:url1/:url2/:url3/"></app-route>
+    <app-route id="specialRoute" route="{{ url }}" pattern="/special"></app-route>
 
     <!-- Page settings -->
     <my-app-page
@@ -191,7 +193,14 @@ subject to an additional IP secondarys grant found at http://polymer.github.io/P
                     hidden="[[ primaryToolbarSecondaryHidden ]]"></paper-icon-button>
           </paper-toolbar>
 
-          <iron-pages id="primaryViewPages" selected="[[ primaryView ]]" attr-for-selected="route" role="primary">
+          <iron-pages
+                  id="primaryViewPages"
+                  selected="[[ primaryView ]]"
+                  attr-for-selected="route"
+                  on-iron-select="_viewSelect"
+                  on-iron-deselect="_viewDeselect"
+                  role="primary">
+
             <loading-view route="loading"></loading-view>
             <error-view route="error"></error-view>
 
@@ -213,7 +222,13 @@ subject to an additional IP secondarys grant found at http://polymer.github.io/P
             <div id="secondaryToolbarTitle" class="title">[[ secondaryToolbarTitle ]]</div>
           </paper-toolbar>
 
-          <iron-pages id="secondaryViewPages" selected="[[ secondaryView ]]" attr-for-selected="route">
+          <iron-pages
+                  id="secondaryViewPages"
+                  selected="[[ secondaryView ]]"
+                  attr-for-selected="route"
+                  on-iron-select="_viewSelect"
+                  on-iron-deselect="_viewDeselect">
+
             <loading-view route="loading"></loading-view>
             <error-view route="error"></error-view>
 
@@ -231,7 +246,7 @@ subject to an additional IP secondarys grant found at http://polymer.github.io/P
   <script>
     Polymer({
       is: 'my-app',
-      behaviors: [Polymer.IronResizableBehavior],
+      behaviors: [ Polymer.IronResizableBehavior, myAppRoutingBehavior ],
 
       properties: {
         route: {
@@ -266,93 +281,6 @@ subject to an additional IP secondarys grant found at http://polymer.github.io/P
         this._secondaryDrawerForceNarrow();
       },
 
-      // Routing.
-      // TODO: Split into e.g. "select page" and "set page settings" functions.
-      _routeChanged: function() {
-        // The new active page to be shown.
-        this.route = undefined;
-
-        // Check for valid default route.
-        if( !this.route && ( this.$.defaultRoute1.active || this.$.defaultRoute2.active || this.$.defaultRoute3.active )) {
-          var route;
-
-          // Build the view id from the active route data.
-          if( this.$.defaultRoute1.active ) {
-            route = this.$.defaultRoute1.data.url1;
-          } else if( this.$.defaultRoute2.active ) {
-            route = this.$.defaultRoute2.data.url1 + '_' + this.$.defaultRoute2.data.url2;
-          } else if( this.$.defaultRoute3.active ) {
-            route = this.$.defaultRoute3.data.url1 + '_' + this.$.defaultRoute3.data.url2 + '_' + this.$.defaultRoute3.data.url3;
-          }
-
-          // If the page exists, set it as page.
-          if( this.$[ 'page-' + route ]) {
-            this.route = route;
-          }
-        }
-
-        // Check for valid special route.
-        if( !this.route && this.$.specialRoute.active ) {
-          this.route = 'special';
-        }
-
-        // If no page is found, show 404 page.
-        if( !this.route ) {
-          this.route = 'error404';
-        }
-
-        // Set the page.
-        this.page = this.$[ 'page-' + this.route ];
-
-        // TODO: Check for access rights.
-
-        // Navigation drawer.
-        this.navigationPanelDisabled = this.page.navigationPanelDisabled;
-        this.navigationPanelMaxWidth = this.page.navigationPanelMaxWidth;
-
-        // Primary Panel - Page settings.
-        this.primaryPanelMinWidth = this.page.primaryPanelMinWidth;
-
-        // Primary toolbar.
-        this.primaryToolbarTitle = this.page.primaryToolbarTitle;
-        this.primaryToolbarSize = this.page.primaryToolbarSize;
-        this.primaryToolbarNavigation = this.page.primaryToolbarNavigation;
-        this.primaryToolbarNavigationIcon = this.page.primaryToolbarNavigationIcon;
-        this.primaryToolbarBack = this.page.primaryToolbarBack;
-        // TODO: If no href is set, route 1 level down by default.
-        this.primaryToolbarBackHref = this.page.primaryToolbarBackHref;
-        this.primaryToolbarBackIcon = this.page.primaryToolbarBackIcon;
-        this.primaryToolbarSecondary = this.page.primaryToolbarSecondary;
-        this.primaryToolbarSecondaryIcon = this.page.primaryToolbarSecondaryIcon;
-
-        // Set primary view to loading and start loading.
-        this.primaryView = 'loading';
-        // TODO: is it possible to check if this view already is loaded before laoading again?
-        var resolvedMainViewUrl = this.resolveUrl( 'page/' + this.route + '/primary-view.html' );
-        this.importHref( resolvedMainViewUrl, this._primaryViewLoaded, this._primaryViewError, true );
-
-        // Secondary drawer.
-        this.secondaryPanelEnabled = this.page.secondaryPanelEnabled;
-        this.secondaryPanelHidden = this.page.secondaryPanelHidden;
-        this.secondaryPanelMaxWidth = this.page.secondaryPanelMaxWidth;
-        // Manually set the drawer panel to main.
-        this.secondaryDrawerSelected = 'main';
-
-        // Secondary toolbar.
-        this.secondaryToolbarTitle = this.page.secondaryToolbarTitle;
-        this.secondaryToolbarSize = this.page.secondaryToolbarSize;
-
-        if( this.secondaryPanelEnabled ) {
-          // Set secondary view to loading and start loading.
-          this.secondaryView = 'loading';
-          // TODO: is it possible to check if this view already is loaded before laoading again?
-          var resolvedSecondaryViewUrl = this.resolveUrl( 'page/' + this.route + '/secondary-view.html' );
-          this.importHref( resolvedSecondaryViewUrl, this._secondaryViewLoaded, this._secondaryViewError, true );
-        }
-
-        this._resizeHandler();
-      },
-
       /* importHref functions */
       _primaryViewLoaded: function() {
         this.primaryView = this.route;
@@ -370,6 +298,20 @@ subject to an additional IP secondarys grant found at http://polymer.github.io/P
 
       _secondaryViewError: function() {
         this.primaryView = 'error';
+      },
+
+      // Pass trough select and deselect events from the irpn-pages to the view.
+      // TODO: Fix the grammar in this comment.
+      _viewSelect: function( event, detail ) {
+        if( typeof detail.item.select === 'function' ) {
+          detail.item.select();
+        }
+      },
+
+      _viewDeselect: function( event, detail ) {
+        if( typeof detail.item.deselect === 'function' ) {
+          detail.item.deselect();
+        }
       },
 
       /* Observers */

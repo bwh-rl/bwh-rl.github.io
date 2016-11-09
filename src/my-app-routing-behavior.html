@@ -1,0 +1,101 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<script>
+	myAppRoutingBehavior = {
+		listeners: {
+			'app-route-matched': '_routeChanged'
+		},
+
+		// Routing.
+		_routeChanged: function() {
+			this._selectPage();
+			this._setPage();
+		},
+
+		_selectPage: function() {
+			// The new active page to be shown.
+			this.route = undefined;
+
+			// Check for valid default route.
+			if( !this.route && ( this.$.defaultRoute1.active || this.$.defaultRoute2.active || this.$.defaultRoute3.active )) {
+				var route;
+
+				// Build the view id from the active route data.
+				if( this.$.defaultRoute1.active ) {
+					route = this.$.defaultRoute1.data.url1;
+				} else if( this.$.defaultRoute2.active ) {
+					route = this.$.defaultRoute2.data.url1 + '_' + this.$.defaultRoute2.data.url2;
+				} else if( this.$.defaultRoute3.active ) {
+					route = this.$.defaultRoute3.data.url1 + '_' + this.$.defaultRoute3.data.url2 + '_' + this.$.defaultRoute3.data.url3;
+				}
+
+				// If the page exists, set it as page.
+				if( this.$[ 'page-' + route ]) {
+					this.route = route;
+				}
+			}
+
+			// Check for valid cellRESET route.
+			if( !this.route && this.$.cellresetRoute.active ) {
+				this.route = 'cellreset';
+				this.$.cellreset.route = this.$.cellresetRoute.tail;
+			}
+
+			// If no page is found, show 404 page.
+			if( !this.route ) {
+				this.route = 'error404';
+			}
+
+			// Set the page.
+			this.page = this.$[ 'page-' + this.route ];
+
+			// TODO: Check for access rights.
+			// Todo: Check for forced wizard.
+		},
+
+		_setPage: function() {
+			// Navigation drawer.
+			this.navigationPanelDisabled = this.page.navigationPanelDisabled;
+			this.navigationPanelMaxWidth = this.page.navigationPanelMaxWidth;
+
+			// Primary Panel - Page settings.
+			this.primaryPanelMinWidth = this.page.primaryPanelMinWidth;
+
+			// Primary toolbar.
+			this.primaryToolbarTitle = this.page.primaryToolbarTitle;
+			this.primaryToolbarSize = this.page.primaryToolbarSize;
+			this.primaryToolbarNavigation = this.page.primaryToolbarNavigation;
+			this.primaryToolbarNavigationIcon = this.page.primaryToolbarNavigationIcon;
+			this.primaryToolbarBack = this.page.primaryToolbarBack;
+			this.primaryToolbarBackHref = this.page.primaryToolbarBackHref;
+			this.primaryToolbarBackIcon = this.page.primaryToolbarBackIcon;
+			this.primaryToolbarSecondary = this.page.primaryToolbarSecondary;
+			this.primaryToolbarSecondaryIcon = this.page.primaryToolbarSecondaryIcon;
+
+			// Set primary view to loading and start loading.
+			this.primaryView = 'loading';
+			// TODO: is it possible to check if this view already is loaded before laoading again?
+			var resolvedMainViewUrl = this.resolveUrl( 'page/' + this.route + '/primary-view.html' );
+			this.importHref( resolvedMainViewUrl, this._primaryViewLoaded, this._primaryViewError, true );
+
+			// Secondary drawer.
+			this.secondaryPanelEnabled = this.page.secondaryPanelEnabled;
+			this.secondaryPanelHidden = this.page.secondaryPanelHidden;
+			this.secondaryPanelMaxWidth = this.page.secondaryPanelMaxWidth;
+			// Manually set the drawer panel to main.
+			this.secondaryDrawerSelected = 'main';
+
+			// Secondary toolbar.
+			this.secondaryToolbarTitle = this.page.secondaryToolbarTitle;
+			this.secondaryToolbarSize = this.page.secondaryToolbarSize;
+
+			if( this.secondaryPanelEnabled ) {
+				// Set secondary view to loading and start loading.
+				this.secondaryView = 'loading';
+				// TODO: is it possible to check if this view already is loaded before laoading again?
+				var resolvedSecondaryViewUrl = this.resolveUrl( 'page/' + this.route + '/secondary-view.html' );
+				this.importHref( resolvedSecondaryViewUrl, this._secondaryViewLoaded, this._secondaryViewError, true );
+			}
+		}
+	};
+</script>
