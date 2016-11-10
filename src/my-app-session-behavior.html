@@ -1,0 +1,30 @@
+<!--
+Provide function to log in and out, and to update the user settings.
+Provide logged in, logged out and updated notifications for the views.
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<script>
+	myAppSessionBehavior = {
+		properties: {
+			user: {
+				type: Object,
+				value: [],
+				readOnly: true
+			}
+		},
+
+		login: function( username, password ) {
+			// TODO: Try to login and notify views on success.
+		},
+
+		logout: function() {
+			// TODO: Try to logout and notify views on success.
+		},
+
+		setUser: function( user ) {
+			// TODO: Try to update user and notify views on success.
+		}
+	};
+</script>
