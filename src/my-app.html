@@ -30,10 +30,9 @@ subject to an additional IP secondarys grant found at http://polymer.github.io/P
 <link rel="import" href="my-app-page.html">
 <link rel="import" href="my-app-styles.html">
 <!-- Non-lazy views. -->
-<!-- TODO: Move this outside of page directory, rename e.g. my-app-loading-view, my-app-error-view. -->
-<link rel="import" href="page/loading/view.html">
+<link rel="import" href="my-app-loading-view.html">
 <link rel="import" href="my-app-error-view.html">
-
+<!-- App behaviors. -->
 <link rel="import" href="my-app-routing-behavior.html">
 <link rel="import" href="my-app-select-page-behavior.html">
 
@@ -200,8 +199,8 @@ subject to an additional IP secondarys grant found at http://polymer.github.io/P
                   attr-for-selected="route"
                   role="primary">
 
-            <loading-view route="loading"></loading-view>
-            <error-view route="error"></error-view>
+            <my-app-loading-view route="loading"></my-app-loading-view>
+            <my-app-error-view route="error"></my-app-error-view>
 
             <login-primary-view route="login"></login-primary-view>
 
@@ -227,7 +226,7 @@ subject to an additional IP secondarys grant found at http://polymer.github.io/P
                   attr-for-selected="route">
 
             <loading-view route="loading"></loading-view>
-            <error-view route="error"></error-view>
+            <my-app-error-view route="error"></my-app-error-view>
 
             <content-secondary-view route="content"></content-secondary-view>
             <profile_image-secondary-view route="profile_image"></profile_image-secondary-view>
