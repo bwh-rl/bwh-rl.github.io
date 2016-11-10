@@ -85,11 +85,11 @@
 			// Manually set the drawer panel to main.
 			this.secondaryDrawerSelected = 'main';
 
-			// Secondary toolbar.
-			this.secondaryToolbarTitle = this.page.secondaryToolbarTitle;
-			this.secondaryToolbarSize = this.page.secondaryToolbarSize;
-
 			if( this.secondaryPanelEnabled ) {
+				// Secondary toolbar.
+				this.secondaryToolbarTitle = this.page.secondaryToolbarTitle;
+				this.secondaryToolbarSize = this.page.secondaryToolbarSize;
+
 				// Set secondary view to loading and start loading.
 				this.secondaryView = 'loading';
 				// TODO: is it possible to check if this view already is loaded before laoading again?
