@@ -1,0 +1,25 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<script>
+	myAppSelectPageBehavior = {
+		listeners: {
+			'primaryViewPages.iron-select': '_viewSelect',
+			'primaryViewPages.iron-deselect': '_viewDeselect',
+			'secondaryViewPages.iron-select': '_viewSelect',
+			'secondaryViewPages.iron-deselect': '_viewDeselect'
+		},
+
+		// Pass trough select and deselect events from the iron-pages to the view.
+		_viewSelect: function( event, detail ) {
+			if( typeof detail.item.select === 'function' ) {
+				detail.item.select();
+			}
+		},
+
+		_viewDeselect: function( event, detail ) {
+			if( typeof detail.item.deselect === 'function' ) {
+				detail.item.deselect();
+			}
+		}
+	};
+</script>

@@ -35,6 +35,7 @@ subject to an additional IP secondarys grant found at http://polymer.github.io/P
 <link rel="import" href="my-app-error-view.html">
 
 <link rel="import" href="my-app-routing-behavior.html">
+<link rel="import" href="my-app-select-page-behavior.html">
 
 <dom-module id="my-app">
   <template>
@@ -197,8 +198,6 @@ subject to an additional IP secondarys grant found at http://polymer.github.io/P
                   id="primaryViewPages"
                   selected="[[ primaryView ]]"
                   attr-for-selected="route"
-                  on-iron-select="_viewSelect"
-                  on-iron-deselect="_viewDeselect"
                   role="primary">
 
             <loading-view route="loading"></loading-view>
@@ -225,9 +224,7 @@ subject to an additional IP secondarys grant found at http://polymer.github.io/P
           <iron-pages
                   id="secondaryViewPages"
                   selected="[[ secondaryView ]]"
-                  attr-for-selected="route"
-                  on-iron-select="_viewSelect"
-                  on-iron-deselect="_viewDeselect">
+                  attr-for-selected="route">
 
             <loading-view route="loading"></loading-view>
             <error-view route="error"></error-view>
@@ -246,7 +243,7 @@ subject to an additional IP secondarys grant found at http://polymer.github.io/P
   <script>
     Polymer({
       is: 'my-app',
-      behaviors: [ Polymer.IronResizableBehavior, myAppRoutingBehavior ],
+      behaviors: [ Polymer.IronResizableBehavior, myAppRoutingBehavior, myAppSelectPageBehavior ],
 
       properties: {
         route: {
@@ -298,20 +295,6 @@ subject to an additional IP secondarys grant found at http://polymer.github.io/P
 
       _secondaryViewError: function() {
         this.primaryView = 'error';
-      },
-
-      // Pass trough select and deselect events from the irpn-pages to the view.
-      // TODO: Fix the grammar in this comment.
-      _viewSelect: function( event, detail ) {
-        if( typeof detail.item.select === 'function' ) {
-          detail.item.select();
-        }
-      },
-
-      _viewDeselect: function( event, detail ) {
-        if( typeof detail.item.deselect === 'function' ) {
-          detail.item.deselect();
-        }
       },
 
       /* Observers */
