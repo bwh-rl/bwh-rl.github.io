@@ -1,0 +1,30 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../my-app-styles.html">
+<link rel="import" href="../../model/recipe-model.html">
+
+<dom-module id="recipe-primary-view">
+	<template>
+		<style include="my-app-styles">
+			:host {
+				display: block;
+				padding: 2rem;
+			}
+		</style>
+
+		<div>
+			<h1>Recipes</h1>
+		</div>
+	</template>
+
+	<script>
+		Polymer({
+			is: 'recipe-primary-view',
+			behaviors: [ recipeModelBehavior ],
+
+			select: function() {
+				this.load();
+			}
+		});
+	</script>
+</dom-module>

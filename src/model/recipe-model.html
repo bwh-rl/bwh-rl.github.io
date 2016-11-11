@@ -1,0 +1,28 @@
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<script>
+	recipeModelBehavior = {
+		listeners: {
+			'response': '_response'
+		},
+
+		ready: function() {
+			console.log( 'ready' );
+			this.ajax = document.createElement('iron-ajax');
+			this.ajax.url = '/src/model/recipe.json';
+			this.ajax.method = 'POST';
+			console.log( this.ajax );
+			this.recipe = [];
+		},
+
+		load: function() {
+			console.log( 'load' );
+			this.ajax.generateRequest();
+		},
+
+		_response: function() {
+			console.log( 'response' );
+			this.recipe = this.ajax.lastResponse;
+		}
+	};
+</script>
